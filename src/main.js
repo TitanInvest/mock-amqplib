@@ -54,9 +54,10 @@ const createDirectExchange = () => {
       });
     },
     getTargetQueues: (routingKey, options = {}) => {
-      if (routingKey === "#") return bindings.map(binding => binding.targetQueue)
-      const matchingBinding = bindings.find(binding => binding.pattern === routingKey);
-      return [matchingBinding.targetQueue];
+      // const fanoutQueues = bindings.filter(b => b.pattern === '#').map(b => b.targetQueue) || [];
+      // const matchingBinding = bindings.find(binding => binding.pattern === routingKey);
+      // matchingBinding && fanoutQueues.push(matchingBinding)
+      return bindings.filter(b => b.pattern === "#" || b.pattern === routingKey).map(b => b.targetQueue)
     }
   };
 };
@@ -95,6 +96,7 @@ const createChannel = async () => ({
   assertExchange: async (exchangeName, type) => {
     let exchange;
 
+    if (exchangeName in exchanges) return
     switch(type) {
       case 'fanout':
         exchange = createFanoutExchange();
