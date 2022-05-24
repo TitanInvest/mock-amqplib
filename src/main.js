@@ -129,8 +129,9 @@ const createChannel = async () => ({
     };
 
     for(const queueName of queueNames) {
-      queues[queueName].add(message);
+      await queues[queueName].add(message);
     }
+    return true
   },
   sendToQueue: async (queueName, content, { headers } = {}) => {
     await queues[queueName].add({
